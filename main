@@ -60,17 +60,37 @@ def atomicNumberToElectronConfig(i):
         electronConfig+=str(runningBlockCounter+1)
     return electronConfig
 
-def eliminate(remainingElementDictionaries, field, condition):
+def eliminate(remainingElementDictionaries, field, questionParam,condition):
     newDic=remainingElementDictionaries.copy()
     for i in range(0, len(remainingElementDictionaries)):
-        if(remainingElementDictionaries[i][field]!=condition):
+        if(remainingElementDictionaries[i][field]!=(questionParam and condition)):
             for j in range(0, len(newDic)):
                 if(newDic[j]["name"]==remainingElementDictionaries[i]["name"]):
                     newDic.pop(j)
                     break
     print(len(newDic))
     return newDic
+def getIdealQuestion(questionsLeft, remainingElementDictionaries):
+    possibleQuestions=[]
+    numOfExceptions=0
+    family=[0 for i in range(18)]
+    period=[0 for i in range(5)]
+    for i in range(0, len(remainingElementDictionaries)):
+        possibleQuestions+=[["name", remainingElementDictionaries[i]["name"], 1]]
+        if(remainingElementDictionaries[i]["exceptionToConfigRules"]):
+            numOfExceptions+=1
+        family[remainingElementDictionaries[i]["family"]]+=1
+        period[remainingElementDictionaries[i]["period"]]+=1
+    possibleQuestions+=[["exceptionToConfigRules", None, numOfExceptions]]
+    for i in range(0, 18):
+        if(family[i]!=0):
+            possibleQuestions+=[["family"], i+1, family[i]]
+    for i in range(0, 5):
+        if(period[i]!=0):
+            possibleQuestions+=[["period"], i+1, period[i]]
+    print(possibilities)
 def main():
+    numOfQuestionsAsked=0
     remainingElementDictionaries=[]
     for i in range(0, len(elementNames)):
         tempDic= {
@@ -88,15 +108,21 @@ def main():
     #"Is your element a metal?"
     #"Is your element a transition metal?"
 
-
+    questions=[]
     #"Does your element have _____ in it's electron configuration"
+    questions+="does "
     #electronConfStrings=["Does your element have ", "in it's electron configuration"]
     #"Is your element an exception to the electron configuration rules?"
     #"Does your element form a charge of ___"
     #"Is you element's atomic number over ____"
     print("Is your element a transition metal?")
+    numOfQuestionsAsked+=1
     print(len(remainingElementDictionaries))
-    remainingElementDictionaries=eliminate(remainingElementDictionaries, "transitionMetal", input()=="t")
+    remainingElementDictionaries=eliminate(remainingElementDictionaries, "transitionMetal", True, input()=="t")
+
     while(len(remainingElementDictionaries)!=1):
-        print(questions[getQuesitonCategory][])
+        questionCategory, questionParam=getIdealQuestion(AVGNUMBEROFQUESTIONS-numOfQuestionsAsked, remainingElementDictionaries)
+        print(getQuestion(questionCategory, questionParam))
+        remainingElementDictionaries=eliminate(remainingElementDictionaries, questionCategory, questionParam, input()=="t")
+
 main()
