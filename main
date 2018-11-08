@@ -106,17 +106,40 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
             if((electronConfigPossibilites[j][0] + " ") in remainingElementDictionaries[i]["electronConfig"]):
                 electronConfigPossibilites[j][1] += 1
 
+
+    #no zero check because info gain below takes care of it and it's more readable this way
     possibleQuestions += [["exceptionToConfigRules", None, numOfExceptions]]
     for i in range(0, 18):
-        if(family[i] != 0):
-            possibleQuestions += [["family", i + 1, family[i]]]
+        possibleQuestions += [["family", i + 1, family[i]]]
+
     for i in range(0, 5):
-        if(period[i] != 0):
-            possibleQuestions += [["period", i + 1, period[i]]]
+        possibleQuestions += [["period", i + 1, period[i]]]
 
     for i in range(0, len(electronConfigPossibilites)):
-        if(electronConfigPossibilites[i][1] != 0):
-            possibleQuestions += [["electronConfig", electronConfigPossibilites[i][0], electronConfigPossibilites[i][1]]]
+        possibleQuestions += [["electronConfig", electronConfigPossibilites[i][0], electronConfigPossibilites[i][1]]]
+
+    #turn number of positives into average element elimination
+    for i in range(0, len(possibleQuestions)):
+        posAnswerProb=float(possibleQuestions[i][2])/len(remainingElementDictionaries)
+        negAnswerProb=1-posAnswerProb
+        posAnswerNumberOfEliminatedResponses=len(remainingElementDictionaries)-possibleQuestions[i][2]
+        negAnswerNumberOfEliminatedResponses=possibleQuestions[i][2]
+        averageEliminatedResponses=(posAnswerProb*posAnswerNumberOfEliminatedResponses)+(negAnswerProb*negAnswerNumberOfEliminatedResponses)
+        possibleQuestions[i][2]=averageEliminatedResponses
+    print(len(possibleQuestions))
+    i2=0
+    while(i2<len(possibleQuestions)):
+        if(possibleQuestions[i2][2]==0):
+            possibleQuestions.pop(i2)
+        else:
+            i2+=1
+    print(len(possibleQuestions))
+    print()
+    print(possibleQuestions)
+    print()
+
+
+
 
 
 def main():
