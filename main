@@ -1,15 +1,20 @@
 
 from random import randint
-#Define constants
-AVGNUMBEROFQUESTIONS=5
-#describes block of periodic table
-periodicShapePeriod=([1]*2) + ([2]*8) + ([3] * 8) + ([4] * 18) + ([5] * 18)
-periodicShapeFamily=[1, 18] + (([1, 2] + list(range(13, 19))) * 2) + (list(range(1,19)) * 2)
-#first I need to define the names (numbers (row, period))
-elementNames = ["Hydrogen","Helium","Lithium","Beryllium"]
-elementNames+=["Boron","Carbon","Nitrogen","Oxygen","Fluorine","Neon","Sodium","Magnesium","Aluminum","Silicon","Phosphorus","Sulfur","Chlorine","Argon","Potassium","Calcium","Scandium","Titanium","Vanadium","Chromium"]
-elementNames+=["Manganese","Iron","Cobalt","Nickel","Copper","Zinc","Gallium","Germanium","Arsenic","Selenium","Bromine","Krypton","Rubidium","Strontium","Yttrium","Zirconium","Niobium","Molybdenum","Technetium","Ruthenium","Rhodium","Palladium","Silver"]
-elementNames+=["Cadmium","Indium","Tin","Antimony","Tellurium","Iodine","Xenon"]
+# Define constants
+AVGNUMBEROFQUESTIONS = 5
+# describes block of periodic table
+periodicShapePeriod = ([1] * 2) + ([2] * 8) + \
+    ([3] * 8) + ([4] * 18) + ([5] * 18)
+periodicShapeFamily = [
+    1, 18] + (([1, 2] + list(range(13, 19))) * 2) + (list(range(1, 19)) * 2)
+# first I need to define the names (numbers (row, period))
+elementNames = ["Hydrogen", "Helium", "Lithium", "Beryllium"]
+elementNames += ["Boron", "Carbon", "Nitrogen", "Oxygen", "Fluorine", "Neon", "Sodium", "Magnesium", "Aluminum", "Silicon",
+                 "Phosphorus", "Sulfur", "Chlorine", "Argon", "Potassium", "Calcium", "Scandium", "Titanium", "Vanadium", "Chromium"]
+elementNames += ["Manganese", "Iron", "Cobalt", "Nickel", "Copper", "Zinc", "Gallium", "Germanium", "Arsenic", "Selenium", "Bromine", "Krypton",
+                 "Rubidium", "Strontium", "Yttrium", "Zirconium", "Niobium", "Molybdenum", "Technetium", "Ruthenium", "Rhodium", "Palladium", "Silver"]
+elementNames += ["Cadmium", "Indium", "Tin",
+                 "Antimony", "Tellurium", "Iodine", "Xenon"]
 '''
 ,"Cesium","Barium","Lanthanum","Cerium","Praseodymium","Neodymium","Promethium","Samarium","Europium","Gadolinium"]
 elementNames+=["Terbium","Dysprosium","Holmium","Erbium","Thulium","Ytterbium","Lutetium","Hafnium","Tantalum","Tungsten","Rhenium","Osmium","Iridium","Platinum","Gold","Mercury","Thallium","Lead","Bismuth","Polonium","Astatine","Radon","Francium","Radium"]
@@ -18,128 +23,139 @@ elementNames+=["Ununtrium","Ununquadium","Ununpentium","Ununhexium","Ununseptium
 '''
 
 
-
 def atomicNumberToElectronConfig(i):
-    electronConfig=""
-    if(i==1):
-        electronConfig="1s1"
+    electronConfig = ""
+    if(i == 1):
+        electronConfig = "1s1"
         return electronConfig
     else:
-        electronConfig="1s"
-    currentPeriod=2
-    currentFamily=1
-    runningBlockCounter=1
-    currentBlock=""
-    j=2
-    while(j<i):
-        if(currentFamily==1):
-            electronConfig+=str(runningBlockCounter+1)+" "
-            runningBlockCounter=0
-            electronConfig+=str(currentPeriod)+"s"
-        elif (currentFamily==3):
-            electronConfig+=str(runningBlockCounter+1)+" "
-            runningBlockCounter=0
-            electronConfig+=str(currentPeriod-1)+"d"
-        elif (currentFamily==13):
-            electronConfig+=str(runningBlockCounter+1)+" "
-            runningBlockCounter=0
-            electronConfig+=str(currentPeriod)+"p"
+        electronConfig = "1s"
+    currentPeriod = 2
+    currentFamily = 1
+    runningBlockCounter = 1
+    currentBlock = ""
+    j = 2
+    while(j < i):
+        if(currentFamily == 1):
+            electronConfig += str(runningBlockCounter + 1) + " "
+            runningBlockCounter = 0
+            electronConfig += str(currentPeriod) + "s"
+        elif (currentFamily == 3):
+            electronConfig += str(runningBlockCounter + 1) + " "
+            runningBlockCounter = 0
+            electronConfig += str(currentPeriod - 1) + "d"
+        elif (currentFamily == 13):
+            electronConfig += str(runningBlockCounter + 1) + " "
+            runningBlockCounter = 0
+            electronConfig += str(currentPeriod) + "p"
         else:
-            runningBlockCounter+=1
-        j+=1
-        if(j<len(elementNames)):
-            currentPeriod=periodicShapePeriod[j]
-            currentFamily=periodicShapeFamily[j]
-    if(currentFamily-1==6):
-        electronConfig=electronConfig[:-6]
-        electronConfig+=str(currentPeriod)+"s1 "+str(currentPeriod-1)+"d5 "
-    elif(currentFamily-1==11):
-        electronConfig=electronConfig[:-6]
-        electronConfig+=str(currentPeriod)+"s1 "+str(currentPeriod-1)+"d10 "
+            runningBlockCounter += 1
+        j += 1
+        if(j < len(elementNames)):
+            currentPeriod = periodicShapePeriod[j]
+            currentFamily = periodicShapeFamily[j]
+    if(currentFamily - 1 == 6):
+        electronConfig = electronConfig[:-6]
+        electronConfig += str(currentPeriod) + "s1 " + \
+            str(currentPeriod - 1) + "d5 "
+    elif(currentFamily - 1 == 11):
+        electronConfig = electronConfig[:-6]
+        electronConfig += str(currentPeriod) + "s1 " + \
+            str(currentPeriod - 1) + "d10 "
     else:
-        electronConfig+=str(runningBlockCounter+1)+" "
+        electronConfig += str(runningBlockCounter + 1) + " "
     return electronConfig
 
-def eliminate(remainingElementDictionaries, field, questionParam,condition):
-    newDic=remainingElementDictionaries.copy()
+
+def eliminate(remainingElementDictionaries, field, questionParam, condition):
+    newDic = remainingElementDictionaries.copy()
     for i in range(0, len(remainingElementDictionaries)):
-        if(remainingElementDictionaries[i][field]!=(questionParam and condition)):
+        if(remainingElementDictionaries[i][field] != (questionParam and condition)):
             for j in range(0, len(newDic)):
-                if(newDic[j]["name"]==remainingElementDictionaries[i]["name"]):
+                if(newDic[j]["name"] == remainingElementDictionaries[i]["name"]):
                     newDic.pop(j)
                     break
     print(len(newDic))
     return newDic
+
+
 def getIdealQuestion(questionsLeft, remainingElementDictionaries):
-    electronConfigPossibilites=[]
+    electronConfigPossibilites = []
     for i in range(1, 6):
         for j in range(1, 3):
-            electronConfigPossibilites+=[[str(i)+"s"+str(j), 0]]
-        if(2<=i):
+            electronConfigPossibilites += [[str(i) + "s" + str(j), 0]]
+        if(2 <= i):
             for j in range(1, 7):
-                electronConfigPossibilites+=[[str(i)+"p"+str(j), 0]]
-        if(3<=i<=4):
+                electronConfigPossibilites += [[str(i) + "p" + str(j), 0]]
+        if(3 <= i <= 4):
             for j in range(1, 11):
-                electronConfigPossibilites+=[[str(i)+"d"+str(j), 0]]
+                electronConfigPossibilites += [[str(i) + "d" + str(j), 0]]
     print(electronConfigPossibilites)
-    possibleQuestions=[]
-    numOfExceptions=0
-    family=[0 for i in range(18)]
-    period=[0 for i in range(5)]
+    possibleQuestions = []
+    numOfExceptions = 0
+    family = [0 for i in range(18)]
+    period = [0 for i in range(5)]
     for i in range(0, len(remainingElementDictionaries)):
-        possibleQuestions+=[["name", remainingElementDictionaries[i]["name"], 1]]
+        possibleQuestions += [["name",
+                               remainingElementDictionaries[i]["name"], 1]]
         if(remainingElementDictionaries[i]["exceptionToConfigRules"]):
-            numOfExceptions+=1
-        family[remainingElementDictionaries[i]["family"]-1]+=1
-        period[remainingElementDictionaries[i]["period"]-1]+=1
+            numOfExceptions += 1
+        family[remainingElementDictionaries[i]["family"] - 1] += 1
+        period[remainingElementDictionaries[i]["period"] - 1] += 1
         for j in range(0, len(electronConfigPossibilites)):
-            if((electronConfigPossibilites[j][0]+" ") in remainingElementDictionaries[i]["electronConfig"]):
-                electronConfigPossibilites[j][1]+=1
+            if((electronConfigPossibilites[j][0] + " ") in remainingElementDictionaries[i]["electronConfig"]):
+                electronConfigPossibilites[j][1] += 1
 
-    possibleQuestions+=[["exceptionToConfigRules", None, numOfExceptions]]
+    possibleQuestions += [["exceptionToConfigRules", None, numOfExceptions]]
     for i in range(0, 18):
-        if(family[i]!=0):
-            possibleQuestions+=[["family", i+1, family[i]]]
+        if(family[i] != 0):
+            possibleQuestions += [["family", i + 1, family[i]]]
     for i in range(0, 5):
-        if(period[i]!=0):
-            possibleQuestions+=[["period", i+1, period[i]]]
+        if(period[i] != 0):
+            possibleQuestions += [["period", i + 1, period[i]]]
 
     for i in range(0, len(electronConfigPossibilites)):
-        if(electronConfigPossibilites[i][1]!=0):
-            possibleQuestions+=[["electronConfig", electronConfigPossibilites[i][0], electronConfigPossibilites[i][1]]]
+        if(electronConfigPossibilites[i][1] != 0):
+            possibleQuestions += [["electronConfig", electronConfigPossibilites[i][0], electronConfigPossibilites[i][1]]]
+
+
 def main():
-    numOfQuestionsAsked=0
-    remainingElementDictionaries=[]
+    numOfQuestionsAsked = 0
+    remainingElementDictionaries = []
     for i in range(0, len(elementNames)):
-        tempDic= {
-            "name":elementNames[i],
-            "electronConfig":atomicNumberToElectronConfig(i),
-            "exceptionToConfigRules":(periodicShapeFamily[i]==6 or periodicShapeFamily[i]==11),
-            "transitionMetal":(periodicShapeFamily[i] in list(range(3,13))),
-            "atomicNumber":str(i),
-            "family":periodicShapeFamily[i],
-            "period":periodicShapePeriod[i]
+        tempDic = {
+            "name": elementNames[i],
+            "electronConfig": atomicNumberToElectronConfig(i),
+            "exceptionToConfigRules": (periodicShapeFamily[i] == 6 or periodicShapeFamily[i] == 11),
+            "transitionMetal": (periodicShapeFamily[i] in list(range(3, 13))),
+            "atomicNumber": str(i),
+            "family": periodicShapeFamily[i],
+            "period": periodicShapePeriod[i]
         }
         remainingElementDictionaries.append(tempDic)
 
-    #from the numbers I determine electron configuration, hardcoding exceptions for half and fully filled D
+    # from the numbers I determine electron configuration, hardcoding exceptions for half and fully filled D
     #"Is your element a metal?"
     #"Is your element a transition metal?"
 
-    questions=[]
+    questions = []
     #"Does your element have _____ in it's electron configuration"
-    questions+="does "
+    questions += "does "
     #electronConfStrings=["Does your element have ", "in it's electron configuration"]
     #"Is your element an exception to the electron configuration rules?"
     #"Does your element form a charge of ___"
     #"Is you element's atomic number over ____"
     print("Is your element a transition metal?")
-    numOfQuestionsAsked+=1
-    remainingElementDictionaries=eliminate(remainingElementDictionaries, "transitionMetal", True, input()=="t")
+    numOfQuestionsAsked += 1
+    remainingElementDictionaries = eliminate(
+        remainingElementDictionaries, "transitionMetal", True, input() == "t")
 
-    while(len(remainingElementDictionaries)!=1):
-        questionCategory, questionParam=getIdealQuestion(AVGNUMBEROFQUESTIONS-numOfQuestionsAsked, remainingElementDictionaries)
+    while(len(remainingElementDictionaries) != 1):
+        questionCategory, questionParam = getIdealQuestion(
+            AVGNUMBEROFQUESTIONS - numOfQuestionsAsked, remainingElementDictionaries)
         print(getQuestion(questionCategory, questionParam))
-        remainingElementDictionaries=eliminate(remainingElementDictionaries, questionCategory, questionParam, input()=="t")
+        remainingElementDictionaries = eliminate(
+            remainingElementDictionaries, questionCategory, questionParam, input() == "t")
+
 
 main()
