@@ -103,13 +103,10 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     for i in range(0, 5):
         if(period[i]!=0):
             possibleQuestions+=[["period", i+1, period[i]]]
-    print()
-    print(electronConfigPossibilites)
-    print()
+
     for i in range(0, len(electronConfigPossibilites)):
         if(electronConfigPossibilites[i][1]!=0):
             possibleQuestions+=[["electronConfig", electronConfigPossibilites[i][0], electronConfigPossibilites[i][1]]]
-    print(possibleQuestions)
 def main():
     numOfQuestionsAsked=0
     remainingElementDictionaries=[]
