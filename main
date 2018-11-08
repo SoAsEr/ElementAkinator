@@ -1,23 +1,84 @@
+
+#Define constants
+#describes block of periodic table
+periodicShapePeriod=([1]*2) + ([2]*8) + ([3] * 8) + ([4] * 18) + ([5] * 18)
+periodicShapeFamily=[1, 18] + (([1, 2] + list(range(13, 19))) * 2) + (list(range(1,19)) * 2)
+#first I need to define the names (numbers (row, period))
+elementNames = ["Hydrogen","Helium","Lithium","Beryllium"]
+elementNames+=["Boron","Carbon","Nitrogen","Oxygen","Fluorine","Neon","Sodium","Magnesium","Aluminum","Silicon","Phosphorus","Sulfur","Chlorine","Argon","Potassium","Calcium","Scandium","Titanium","Vanadium","Chromium"]
+elementNames+=["Manganese","Iron","Cobalt","Nickel","Copper","Zinc","Gallium","Germanium","Arsenic","Selenium","Bromine","Krypton","Rubidium","Strontium","Yttrium","Zirconium","Niobium","Molybdenum","Technetium","Ruthenium","Rhodium","Palladium","Silver"]
+elementNames+=["Cadmium","Indium","Tin","Antimony","Tellurium","Iodine","Xenon"]
+
+
+
+def atomicNumberToElectronConfig(i):
+    electronConfig=""
+    if(i==1):
+        electronConfig="1s1"
+        return electronConfig
+    else:
+        electronConfig="1s"
+    currentPeriod=2
+    currentFamily=1
+    runningBlockCounter=1
+    currentBlock=""
+    j=2
+    while(j<i):
+        if(currentFamily==1):
+            electronConfig+=str(runningBlockCounter+1)
+            runningBlockCounter=0
+            electronConfig+=str(currentPeriod)+"s"
+        elif (currentFamily==3):
+            electronConfig+=str(runningBlockCounter+1)
+            runningBlockCounter=0
+            electronConfig+=str(currentPeriod-1)+"d"
+        elif (currentFamily==13):
+            electronConfig+=str(runningBlockCounter+1)
+            runningBlockCounter=0
+            electronConfig+=str(currentPeriod)+"p"
+        else:
+            runningBlockCounter+=1
+        j+=1
+        currentPeriod=periodicShapePeriod[j]
+        currentFamily=periodicShapeFamily[j]
+    electronConfig+=str(runningBlockCounter)
+    return electronConfig
+
+
 def main():
-    #describes block of periodic table
-    periodicShapePeriod=([1]*2) + ([2]*8) + ([3] * 8) + ([4] * 18) + ([5] * 18)
-    periodicShapeFamily=[1, 18] + (([1, 2] +range(13, 19)) * 2) + (range(1,19) * 2)
-    #first I need to define the names (numbers (row, period))
-    elementNames = ["Hydrogen","Helium","Lithium","Beryllium"]
-    elementNames+=["Boron","Carbon","Nitrogen","Oxygen","Fluorine","Neon","Sodium","Magnesium","Aluminum","Silicon","Phosphorus","Sulfur","Chlorine","Argon","Potassium","Calcium","Scandium","Titanium","Vanadium","Chromium"]
-    elementNames+=["Manganese","Iron","Cobalt","Nickel","Copper","Zinc","Gallium","Germanium","Arsenic","Selenium","Bromine","Krypton","Rubidium","Strontium","Yttrium","Zirconium","Niobium","Molybdenum","Technetium","Ruthenium","Rhodium","Palladium","Silver"]
-    elementNames+=["Cadmium","Indium","Tin","Antimony","Tellurium","Iodine","Xenon","Cesium","Barium","Lanthanum","Cerium","Praseodymium","Neodymium","Promethium","Samarium","Europium","Gadolinium"]
-    elementNames+=["Terbium","Dysprosium","Holmium","Erbium","Thulium","Ytterbium","Lutetium","Hafnium","Tantalum","Tungsten","Rhenium","Osmium","Iridium","Platinum","Gold","Mercury","Thallium","Lead","Bismuth","Polonium","Astatine","Radon","Francium","Radium"]
-    elementNames+=["Actinium","Thorium","Protactinium","Uranium","Neptunium","Plutonium","Americium","Curium","Berkelium","Californium","Einsteinium","Fermium","Mendelevium","Nobelium","Lawrencium","Rutherfordium","Dubnium","Seaborgium","Bohrium","Hassium","Meitnerium","Darmstadtium","Roentgenium","Ununbium"]
-    elementNames+=["Ununtrium","Ununquadium","Ununpentium","Ununhexium","Ununseptium","Ununoctium"]
+
+    '''
+,"Cesium","Barium","Lanthanum","Cerium","Praseodymium","Neodymium","Promethium","Samarium","Europium","Gadolinium"]
+elementNames+=["Terbium","Dysprosium","Holmium","Erbium","Thulium","Ytterbium","Lutetium","Hafnium","Tantalum","Tungsten","Rhenium","Osmium","Iridium","Platinum","Gold","Mercury","Thallium","Lead","Bismuth","Polonium","Astatine","Radon","Francium","Radium"]
+elementNames+=["Actinium","Thorium","Protactinium","Uranium","Neptunium","Plutonium","Americium","Curium","Berkelium","Californium","Einsteinium","Fermium","Mendelevium","Nobelium","Lawrencium","Rutherfordium","Dubnium","Seaborgium","Bohrium","Hassium","Meitnerium","Darmstadtium","Roentgenium","Ununbium"]
+elementNames+=["Ununtrium","Ununquadium","Ununpentium","Ununhexium","Ununseptium","Ununoctium"]
+    '''
+
+
+    '''
+    remainingElementDictionaries=[]
+    for i in range(0, len(elementNames)):
+
+        tempDic= {
+            "name":elementNames[i]
+
+        }
+    '''
     #from the numbers I determine electron configuration, hardcoding exceptions for half and fully filled D
     print(len(periodicShapePeriod))
     print(len(periodicShapeFamily))
+    print(len(elementNames))
 
+    print(atomicNumberToElectronConfig(25))
     #"Is your element a metal?"
-    #"does your element have _____ in it"s electron configuration"
-    #"is your element an exception to the electron configuration rules"
-    #"is your element"
+    #"Is your element a transition metal?"
 
-    categories
+
+    #"Does your element have _____ in it's electron configuration"
+    #electronConfStrings=["Does your element have ", "in it's electron configuration"]
+    #"Is your element an exception to the electron configuration rules?"
+    #"Does your element form a charge of ___"
+    #"Is you element's atomic number over ____"
+    print("Is your element a transition metal?")
+
 main()
