@@ -127,7 +127,6 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
         if(3 <= i <= 4):
             for j in range(1, 11):
                 electronConfigPossibilites += [[str(i) + "d" + str(j), 0]]
-    print(electronConfigPossibilites)
     possibleQuestions = []
     numOfExceptions = 0
     family = [0 for i in range(18)]
@@ -169,12 +168,23 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
             possibleQuestions.pop(i2)
         else:
             i2+=1
+
     quickSort(possibleQuestions, 0, len(possibleQuestions)-1)
-    print(possibleQuestions)
-
     idealQuestionNumber=len(remainingElementDictionaries)*pow(1/len(remainingElementDictionaries), 1/questionsLeft)
-
-
+    bestValueIndex=0
+    for i in range(0, len(possibleQuestions)):
+        if(possibleQuestions[i][2]>idealQuestionNumber):
+            if(abs(possibleQuestions[i][2]-idealQuestionNumber)<abs(possibleQuestions[i-1][2]-idealQuestionNumber)):
+                bestValueIndex=i
+            else:
+                bestValueIndex=i-1
+            break
+    allWithBestValue=[possibleQuestions[bestValueIndex]]
+    for i in range(0, bestValueIndex):
+        if(possibleQuestions[i][2]==possibleQuestions[bestValueIndex][2]):
+            allWithBestValue+=[possibleQuestions[i]]
+    result=allWithBestValue[randint(0, len(allWithBestValue)-1)]
+    return result[0], result[1]
 
 
 
