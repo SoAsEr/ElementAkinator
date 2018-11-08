@@ -8,6 +8,12 @@ elementNames = ["Hydrogen","Helium","Lithium","Beryllium"]
 elementNames+=["Boron","Carbon","Nitrogen","Oxygen","Fluorine","Neon","Sodium","Magnesium","Aluminum","Silicon","Phosphorus","Sulfur","Chlorine","Argon","Potassium","Calcium","Scandium","Titanium","Vanadium","Chromium"]
 elementNames+=["Manganese","Iron","Cobalt","Nickel","Copper","Zinc","Gallium","Germanium","Arsenic","Selenium","Bromine","Krypton","Rubidium","Strontium","Yttrium","Zirconium","Niobium","Molybdenum","Technetium","Ruthenium","Rhodium","Palladium","Silver"]
 elementNames+=["Cadmium","Indium","Tin","Antimony","Tellurium","Iodine","Xenon"]
+'''
+,"Cesium","Barium","Lanthanum","Cerium","Praseodymium","Neodymium","Promethium","Samarium","Europium","Gadolinium"]
+elementNames+=["Terbium","Dysprosium","Holmium","Erbium","Thulium","Ytterbium","Lutetium","Hafnium","Tantalum","Tungsten","Rhenium","Osmium","Iridium","Platinum","Gold","Mercury","Thallium","Lead","Bismuth","Polonium","Astatine","Radon","Francium","Radium"]
+elementNames+=["Actinium","Thorium","Protactinium","Uranium","Neptunium","Plutonium","Americium","Curium","Berkelium","Californium","Einsteinium","Fermium","Mendelevium","Nobelium","Lawrencium","Rutherfordium","Dubnium","Seaborgium","Bohrium","Hassium","Meitnerium","Darmstadtium","Roentgenium","Ununbium"]
+elementNames+=["Ununtrium","Ununquadium","Ununpentium","Ununhexium","Ununseptium","Ununoctium"]
+'''
 
 
 
@@ -25,51 +31,54 @@ def atomicNumberToElectronConfig(i):
     j=2
     while(j<i):
         if(currentFamily==1):
-            electronConfig+=str(runningBlockCounter+1)
+            electronConfig+=str(runningBlockCounter+1)+" "
             runningBlockCounter=0
             electronConfig+=str(currentPeriod)+"s"
         elif (currentFamily==3):
-            electronConfig+=str(runningBlockCounter+1)
+            electronConfig+=str(runningBlockCounter+1)+" "
             runningBlockCounter=0
             electronConfig+=str(currentPeriod-1)+"d"
         elif (currentFamily==13):
-            electronConfig+=str(runningBlockCounter+1)
+            electronConfig+=str(runningBlockCounter+1)+" "
             runningBlockCounter=0
             electronConfig+=str(currentPeriod)+"p"
         else:
             runningBlockCounter+=1
         j+=1
-        currentPeriod=periodicShapePeriod[j]
-        currentFamily=periodicShapeFamily[j]
-    electronConfig+=str(runningBlockCounter)
+        if(j<len(elementNames)):
+            currentPeriod=periodicShapePeriod[j]
+            currentFamily=periodicShapeFamily[j]
+    if(currentFamily-1==6):
+        electronConfig=electronConfig[:-6]
+        electronConfig+=str(currentPeriod)+"s1 "+str(currentPeriod-1)+"d5 "
+    elif(currentFamily-1==11):
+        electronConfig=electronConfig[:-6]
+        electronConfig+=str(currentPeriod)+"s1 "+str(currentPeriod-1)+"d10 "
+    else:
+        electronConfig+=str(runningBlockCounter+1)
     return electronConfig
 
-
+def eliminate(remainingElementDictionaries, field, condition):
+    newDic=remainingElementDictionaries.copy()
+    for i in range(0, len(remainingElementDictionaries)):
+        if(remainingElementDictionaries[i][field]!=condition):
+            newDic.remove(remainingElementDictionaries[i])
+    remainingElementDictionaries=newDic
 def main():
-
-    '''
-,"Cesium","Barium","Lanthanum","Cerium","Praseodymium","Neodymium","Promethium","Samarium","Europium","Gadolinium"]
-elementNames+=["Terbium","Dysprosium","Holmium","Erbium","Thulium","Ytterbium","Lutetium","Hafnium","Tantalum","Tungsten","Rhenium","Osmium","Iridium","Platinum","Gold","Mercury","Thallium","Lead","Bismuth","Polonium","Astatine","Radon","Francium","Radium"]
-elementNames+=["Actinium","Thorium","Protactinium","Uranium","Neptunium","Plutonium","Americium","Curium","Berkelium","Californium","Einsteinium","Fermium","Mendelevium","Nobelium","Lawrencium","Rutherfordium","Dubnium","Seaborgium","Bohrium","Hassium","Meitnerium","Darmstadtium","Roentgenium","Ununbium"]
-elementNames+=["Ununtrium","Ununquadium","Ununpentium","Ununhexium","Ununseptium","Ununoctium"]
-    '''
-
-
-    '''
     remainingElementDictionaries=[]
     for i in range(0, len(elementNames)):
-
         tempDic= {
-            "name":elementNames[i]
-
+            "name":elementNames[i],
+            "electronConfig":atomicNumberToElectronConfig(i),
+            "exceptionToConfigRules":(periodicShapeFamily[i]==6 or 11),
+            "transitionMetal":(periodicShapeFamily[i] in list(range(3,13))),
+            "atomicNumber":str(i),
+            "family":str(periodicShapeFamily[i]),
+            "period":str(periodicShapePeriod[i])
         }
-    '''
-    #from the numbers I determine electron configuration, hardcoding exceptions for half and fully filled D
-    print(len(periodicShapePeriod))
-    print(len(periodicShapeFamily))
-    print(len(elementNames))
+        remainingElementDictionaries.append(tempDic)
 
-    print(atomicNumberToElectronConfig(25))
+    #from the numbers I determine electron configuration, hardcoding exceptions for half and fully filled D
     #"Is your element a metal?"
     #"Is your element a transition metal?"
 
@@ -80,5 +89,7 @@ elementNames+=["Ununtrium","Ununquadium","Ununpentium","Ununhexium","Ununseptium
     #"Does your element form a charge of ___"
     #"Is you element's atomic number over ____"
     print("Is your element a transition metal?")
-
+    print(len(remainingElementDictionaries))
+    eliminate(remainingElementDictionaries, "transitionMetal", input()=="t")
+    print(len(remainingElementDictionaries))
 main()
