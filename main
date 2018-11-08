@@ -1,4 +1,5 @@
 
+from random import randint
 #Define constants
 AVGNUMBEROFQUESTIONS=5
 #describes block of periodic table
@@ -96,4 +97,6 @@ def main():
     print("Is your element a transition metal?")
     print(len(remainingElementDictionaries))
     remainingElementDictionaries=eliminate(remainingElementDictionaries, "transitionMetal", input()=="t")
+    while(len(remainingElementDictionaries)!=1):
+        print(questions[getQuesitonCategory][])
 main()
