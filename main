@@ -1,5 +1,6 @@
 
 #Define constants
+AVGNUMBEROFQUESTIONS=5
 #describes block of periodic table
 periodicShapePeriod=([1]*2) + ([2]*8) + ([3] * 8) + ([4] * 18) + ([5] * 18)
 periodicShapeFamily=[1, 18] + (([1, 2] + list(range(13, 19))) * 2) + (list(range(1,19)) * 2)
@@ -62,8 +63,12 @@ def eliminate(remainingElementDictionaries, field, condition):
     newDic=remainingElementDictionaries.copy()
     for i in range(0, len(remainingElementDictionaries)):
         if(remainingElementDictionaries[i][field]!=condition):
-            newDic.remove(remainingElementDictionaries[i])
-    remainingElementDictionaries=newDic
+            for j in range(0, len(newDic)):
+                if(newDic[j]["name"]==remainingElementDictionaries[i]["name"]):
+                    newDic.pop(j)
+                    break
+    print(len(newDic))
+    return newDic
 def main():
     remainingElementDictionaries=[]
     for i in range(0, len(elementNames)):
@@ -90,6 +95,5 @@ def main():
     #"Is you element's atomic number over ____"
     print("Is your element a transition metal?")
     print(len(remainingElementDictionaries))
-    eliminate(remainingElementDictionaries, "transitionMetal", input()=="t")
-    print(len(remainingElementDictionaries))
+    remainingElementDictionaries=eliminate(remainingElementDictionaries, "transitionMetal", input()=="t")
 main()
