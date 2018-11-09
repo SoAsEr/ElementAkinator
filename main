@@ -209,7 +209,7 @@ def getQuestion(category, param):
         return "Is your element in family "+str(param)
     if(category=="period"):
         return "Is your element in period "+str(param)
-    if(category=="atomicNumber):
+    if(category=="atomicNumber"):
         return "Does your element's atomic number contain a "+str(param)
 
 def main():
