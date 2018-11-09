@@ -204,6 +204,9 @@ def getQuestion(category, param):
         return "Is your element in family "+str(param)
     if(category=="period"):
         return "Is your element in period "+str(param)
+    if(category=="atomicNumber
+":
+        return "Does your element's atomic number contain a "+str(param)
 
 def main():
     numOfQuestionsAsked = 0
@@ -214,7 +217,7 @@ def main():
             "electronConfig": atomicNumberToElectronConfig(i+1),
             "exceptionToConfigRules": (periodicShapeFamily[i] == 6 or periodicShapeFamily[i] == 11),
             "transitionMetal": (periodicShapeFamily[i] in list(range(3, 13))),
-            "atomicNumber": i,
+            "atomicNumber": str(i),
             "family": periodicShapeFamily[i],
             "period": periodicShapePeriod[i]
         }
@@ -232,15 +235,21 @@ def main():
     #"Is your element an exception to the electron configuration rules?"
     #"Does your element form a charge of ___"
     #"Is you element's atomic number over ____"
-    print("Is your element a transition metal?")
+    print("Is your element a transition metal? y/n")
     numOfQuestionsAsked += 1
     remainingElementDictionaries = eliminate(
         remainingElementDictionaries, "transitionMetal", True, input() == "y")
 
-    while(len(remainingElementDictionaries) != 1):
+    while(len(remainingElementDictionaries) > 1):
+        print()
+        print("Possible Elements:")
+        for i in range(0, len(remainingElementDictionaries)-1):
+            print(remainingElementDictionaries[i]["name"], end=', ')
+        print(remainingElementDictionaries[len(remainingElementDictionaries)-1]["name"])
+        print()
         questionCategory, questionParam = getIdealQuestion(
             AVGNUMBEROFQUESTIONS - numOfQuestionsAsked, remainingElementDictionaries)
-        print(getQuestion(questionCategory, questionParam))
+        print(getQuestion(questionCategory, questionParam)+ " y/n")
         remainingElementDictionaries = eliminate(
             remainingElementDictionaries, questionCategory, questionParam, input() == "y")
     print("Your element is: "+remainingElementDictionaries[0]["name"])
