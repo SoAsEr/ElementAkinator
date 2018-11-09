@@ -216,8 +216,24 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     for elem in allWithBestValue:
         if(elem[0] == "name" and (len(elem[1])>1)):
             return elem[0], elem[1]
+    print(allWithBestValue)
     priorities=["exceptionToConfigRules", "electronConfig", "period", "atomicNumber", "family", "name"]
-
+    b=None
+    for elem in priorities:
+        for elem2 in allWithBestValue:
+            if(elem2[0] == elem):
+                b=elem
+            if(b!=None):
+                break
+        if(b!=None):
+            break
+    if(b in priorities):
+        i2 = 0
+        while(i2 < len(allWithBestValue)):
+            if(allWithBestValue[i2][0] != b):
+                allWithBestValue.pop(i2)
+            else:
+                i2 += 1
 
     result = allWithBestValue[randint(0, len(allWithBestValue) - 1)]
     return result[0], result[1]
