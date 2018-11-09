@@ -194,7 +194,7 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
             i2 += 1
 
     quickSort(possibleQuestions, 0, len(possibleQuestions) - 1)
-    print(possibleQuestions)
+    # print(possibleQuestions)
     if(questionsLeft > 1):
         idealQuestionNumber = len(remainingElementDictionaries) * \
             pow(1 / len(remainingElementDictionaries), 1 / questionsLeft)
@@ -214,18 +214,18 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
         if(possibleQuestions[i][2] == possibleQuestions[bestValueIndex][2]):
             allWithBestValue += [possibleQuestions[i]]
     for elem in allWithBestValue:
-        if(elem[0] == "name" and (len(elem[1])>1)):
+        if(elem[0] == "name" and (len(elem[1]) > 1)):
             return elem[0], elem[1]
-    print(allWithBestValue)
-    priorities=["exceptionToConfigRules", "electronConfig", "period", "atomicNumber", "family", "name"]
-    b=None
+    priorities = ["exceptionToConfigRules", "electronConfig",
+                  "period", "atomicNumber", "family", "name"]
+    b = None
     for elem in priorities:
         for elem2 in allWithBestValue:
             if(elem2[0] == elem):
-                b=elem
-            if(b!=None):
+                b = elem
+            if(b != None):
                 break
-        if(b!=None):
+        if(b != None):
             break
     if(b in priorities):
         i2 = 0
@@ -241,7 +241,7 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
 
 def getQuestion(category, param):
     if(category == "name"):
-        if(len(param)>1):
+        if(len(param) > 1):
             return "Is your element " + str(param) + "?"
         else:
             return "Does your element's name contain a " + str(param) + "?"
@@ -254,7 +254,7 @@ def getQuestion(category, param):
     if(category == "period"):
         return "Is your element in period " + str(param) + "?"
     if(category == "atomicNumber"):
-        return "Does your element's atomic number contain a " + str(param) +"?"
+        return "Does your element's atomic number contain a " + str(param) + "?"
 
 
 def main():
@@ -274,16 +274,7 @@ def main():
             tempDic["family"] = 18
         remainingElementDictionaries.append(tempDic)
 
-    # from the numbers I determine electron configuration, hardcoding exceptions for half and fully filled D
-    #"Is your element a metal?"
-    #"Is your element a transition metal?"
 
-    #"Does your element have _____ in it's electron configuration"
-
-    #electronConfStrings=["Does your element have ", "in it's electron configuration"]
-    #"Is your element an exception to the electron configuration rules?"
-    #"Does your element form a charge of ___"
-    #"Is you element's atomic number over ____"
     print("Is your element a transition metal? y/n")
     numOfQuestionsAsked += 1
     remainingElementDictionaries = eliminate(
