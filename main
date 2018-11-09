@@ -173,22 +173,27 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     quickSort(possibleQuestions, 0, len(possibleQuestions)-1)
     if(questionsLeft>1):
         idealQuestionNumber=len(remainingElementDictionaries)*pow(1/len(remainingElementDictionaries), 1/questionsLeft)
-        bestValueIndex=0
-        for i in range(0, len(possibleQuestions)):
-            if(possibleQuestions[i][2]>idealQuestionNumber):
-                if(abs(possibleQuestions[i][2]-idealQuestionNumber)<abs(possibleQuestions[i-1][2]-idealQuestionNumber)):
-                    bestValueIndex=i
-                else:
-                    bestValueIndex=i-1
-                break
-        allWithBestValue=[possibleQuestions[bestValueIndex]]
-        for i in range(0, bestValueIndex):
-            if(possibleQuestions[i][2]==possibleQuestions[bestValueIndex][2]):
-                allWithBestValue+=[possibleQuestions[i]]
-        result=allWithBestValue[randint(0, len(allWithBestValue)-1)]
-        return result[0], result[1]
     else:
-        return possibleQuestions[len(possibleQuestions)-1][0], possibleQuestions[len(possibleQuestions)-1][1]
+        idealQuestionNumber=len(possibleQuestions)-1
+    bestValueIndex=0
+    for i in range(0, len(possibleQuestions)):
+        if(possibleQuestions[i][2]>idealQuestionNumber):
+            if(abs(possibleQuestions[i][2]-idealQuestionNumber)<abs(possibleQuestions[i-1][2]-idealQuestionNumber)):
+                bestValueIndex=i
+            else:
+                bestValueIndex=i-1
+            break
+    allWithBestValue=[possibleQuestions[bestValueIndex]]
+    for i in range(0, bestValueIndex):
+        if(possibleQuestions[i][2]==possibleQuestions[bestValueIndex][2]):
+            allWithBestValue+=[possibleQuestions[i]]
+    for i in range(0, len(allWithBestValue)):
+        if(allWithBestValue[i][0]=="name"):
+            result=allWithBestValue[i]
+            return result[0], result[1]
+    result=allWithBestValue[randint(0, len(allWithBestValue)-1)]
+    return result[0], result[1]
+
 
 
 
@@ -204,8 +209,7 @@ def getQuestion(category, param):
         return "Is your element in family "+str(param)
     if(category=="period"):
         return "Is your element in period "+str(param)
-    if(category=="atomicNumber
-":
+    if(category=="atomicNumber):
         return "Does your element's atomic number contain a "+str(param)
 
 def main():
