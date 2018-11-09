@@ -1,5 +1,6 @@
 
 from random import randint
+from string import ascii_lowercase
 # Define constants
 # if 0, converges as quickly as possible
 AVGNUMBEROFQUESTIONS = 0
@@ -72,7 +73,7 @@ def eliminate(remainingElementDictionaries, field, questionParam, condition):
     newDic = remainingElementDictionaries.copy()
     for i in range(0, len(remainingElementDictionaries)):
 
-        if((str(questionParam) in str(remainingElementDictionaries[i][field])) != condition):
+        if((str.lower(str(questionParam)) in str.lower(str(remainingElementDictionaries[i][field]))) != condition):
             for j in range(0, len(newDic)):
                 if(newDic[j]["name"] == remainingElementDictionaries[i]["name"]):
                     newDic.pop(j)
@@ -138,6 +139,7 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     family = [0 for i in range(18)]
     period = [0 for i in range(5)]
     atomic = [0 for i in range(10)]
+    letters = [0 for i in range(26)]
     for i in range(0, len(remainingElementDictionaries)):
         possibleQuestions += [["name",
                                remainingElementDictionaries[i]["name"], 1]]
@@ -151,6 +153,9 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
         for j in range(0, 10):
             if(str(j + 1) in remainingElementDictionaries[i]["atomicNumber"]):
                 atomic[j] += 1
+        for j in range(0, 26):
+            if(ascii_lowercase[j] in remainingElementDictionaries[i]["name"]):
+                letters[j] += 1
 
     # no zero check because info gain below takes care of it and it's more readable this way
     possibleQuestions += [["exceptionToConfigRules", True, numOfExceptions]]
@@ -166,6 +171,10 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
 
     for i in range(0, 10):
         possibleQuestions += [["atomicNumber", i + 1, atomic[i]]]
+
+    for i in range(0, 26):
+        possibleQuestions += [["name", ascii_lowercase[i], letters[i]]]
+
     # turn number of positives into average element elimination
     for i in range(0, len(possibleQuestions)):
         posAnswerProb = float(
@@ -205,7 +214,7 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
         if(possibleQuestions[i][2] == possibleQuestions[bestValueIndex][2]):
             allWithBestValue += [possibleQuestions[i]]
     for i in range(0, len(allWithBestValue)):
-        if(allWithBestValue[i][0] == "name"):
+        if(allWithBestValue[i][0] == "name" and (len(allWithBestValue[i][1])>1)):
             result = allWithBestValue[i]
             return result[0], result[1]
     result = allWithBestValue[randint(0, len(allWithBestValue) - 1)]
@@ -214,17 +223,20 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
 
 def getQuestion(category, param):
     if(category == "name"):
-        return "Is your element " + str(param) + "?"
+        if(len(param)>1):
+            return "Is your element " + str(param) + "?"
+        else:
+            return "Does your element's name contain a " + str(param) + "?"
     if(category == "exceptionToConfigRules"):
         return "Is your element an exception to the normal electron configuration rules?"
     if(category == "electronConfig"):
-        return "Does your element contain " + str(param) + " in it's electron configuration"
+        return "Does your element contain " + str(param) + " in it's electron configuration?"
     if(category == "family"):
-        return "Is your element in family " + str(param)
+        return "Is your element in family " + str(param) + "?"
     if(category == "period"):
-        return "Is your element in period " + str(param)
+        return "Is your element in period " + str(param) + "?"
     if(category == "atomicNumber"):
-        return "Does your element's atomic number contain a " + str(param)
+        return "Does your element's atomic number contain a " + str(param) +"?"
 
 
 def main():
