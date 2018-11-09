@@ -132,6 +132,7 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     numOfExceptions = 0
     family = [0 for i in range(18)]
     period = [0 for i in range(5)]
+    atomic = [0 for i in range(10)]
     for i in range(0, len(remainingElementDictionaries)):
         possibleQuestions += [["name",
                                remainingElementDictionaries[i]["name"], 1]]
@@ -142,6 +143,9 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
         for j in range(0, len(electronConfigPossibilites)):
             if((electronConfigPossibilites[j][0]) in remainingElementDictionaries[i]["electronConfig"]):
                 electronConfigPossibilites[j][1] += 1
+        for j in range(0, 10):
+            if(str(j+1) in remainingElementDictionaries[i]["atomicNumber"]):
+                atomic[j]+=1
 
 
     #no zero check because info gain below takes care of it and it's more readable this way
@@ -155,6 +159,8 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     for i in range(0, len(electronConfigPossibilites)):
         possibleQuestions += [["electronConfig", electronConfigPossibilites[i][0], electronConfigPossibilites[i][1]]]
 
+    for i in range(0, 10):
+        possibleQuestions += [["atomicNumber", i+1, atomic[i]]]
     #turn number of positives into average element elimination
     for i in range(0, len(possibleQuestions)):
         posAnswerProb=float(possibleQuestions[i][2])/len(remainingElementDictionaries)
@@ -171,18 +177,20 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
             i2+=1
 
     quickSort(possibleQuestions, 0, len(possibleQuestions)-1)
+    print(possibleQuestions)
     if(questionsLeft>1):
         idealQuestionNumber=len(remainingElementDictionaries)*pow(1/len(remainingElementDictionaries), 1/questionsLeft)
+        bestValueIndex=0
+        for i in range(0, len(possibleQuestions)):
+            if(possibleQuestions[i][2]>idealQuestionNumber):
+                if(abs(possibleQuestions[i][2]-idealQuestionNumber)<abs(possibleQuestions[i-1][2]-idealQuestionNumber)):
+                    bestValueIndex=i
+                else:
+                    bestValueIndex=i-1
+                break
     else:
-        idealQuestionNumber=len(possibleQuestions)-1
-    bestValueIndex=0
-    for i in range(0, len(possibleQuestions)):
-        if(possibleQuestions[i][2]>idealQuestionNumber):
-            if(abs(possibleQuestions[i][2]-idealQuestionNumber)<abs(possibleQuestions[i-1][2]-idealQuestionNumber)):
-                bestValueIndex=i
-            else:
-                bestValueIndex=i-1
-            break
+        bestValueIndex=len(possibleQuestions)-1
+
     allWithBestValue=[possibleQuestions[bestValueIndex]]
     for i in range(0, bestValueIndex):
         if(possibleQuestions[i][2]==possibleQuestions[bestValueIndex][2]):
@@ -221,7 +229,7 @@ def main():
             "electronConfig": atomicNumberToElectronConfig(i+1),
             "exceptionToConfigRules": (periodicShapeFamily[i] == 6 or periodicShapeFamily[i] == 11),
             "transitionMetal": (periodicShapeFamily[i] in list(range(3, 13))),
-            "atomicNumber": str(i),
+            "atomicNumber": str(i+1),
             "family": periodicShapeFamily[i],
             "period": periodicShapePeriod[i]
         }
