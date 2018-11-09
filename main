@@ -140,21 +140,21 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     period = [0 for i in range(5)]
     atomic = [0 for i in range(10)]
     letters = [0 for i in range(26)]
-    for i in range(0, len(remainingElementDictionaries)):
+    for elem in remainingElementDictionaries:
         possibleQuestions += [["name",
-                               remainingElementDictionaries[i]["name"], 1]]
-        if(remainingElementDictionaries[i]["exceptionToConfigRules"]):
+                               elem["name"], 1]]
+        if(elem["exceptionToConfigRules"]):
             numOfExceptions += 1
-        family[remainingElementDictionaries[i]["family"] - 1] += 1
-        period[remainingElementDictionaries[i]["period"] - 1] += 1
+        family[elem["family"] - 1] += 1
+        period[elem["period"] - 1] += 1
         for j in range(0, len(electronConfigPossibilites)):
-            if((electronConfigPossibilites[j][0]) in remainingElementDictionaries[i]["electronConfig"]):
+            if((electronConfigPossibilites[j][0]) in elem["electronConfig"]):
                 electronConfigPossibilites[j][1] += 1
         for j in range(0, 10):
-            if(str(j + 1) in remainingElementDictionaries[i]["atomicNumber"]):
+            if(str(j + 1) in elem["atomicNumber"]):
                 atomic[j] += 1
         for j in range(0, 26):
-            if(ascii_lowercase[j] in remainingElementDictionaries[i]["name"]):
+            if(ascii_lowercase[j] in elem["name"]):
                 letters[j] += 1
 
     # no zero check because info gain below takes care of it and it's more readable this way
@@ -165,9 +165,9 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     for i in range(0, 5):
         possibleQuestions += [["period", i + 1, period[i]]]
 
-    for i in range(0, len(electronConfigPossibilites)):
+    for elem in electronConfigPossibilites:
         possibleQuestions += [["electronConfig",
-                               electronConfigPossibilites[i][0], electronConfigPossibilites[i][1]]]
+                               elem[0], elem[1]]]
 
     for i in range(0, 10):
         possibleQuestions += [["atomicNumber", i + 1, atomic[i]]]
@@ -176,16 +176,16 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
         possibleQuestions += [["name", ascii_lowercase[i], letters[i]]]
 
     # turn number of positives into average element elimination
-    for i in range(0, len(possibleQuestions)):
+    for elem in possibleQuestions:
         posAnswerProb = float(
-            possibleQuestions[i][2]) / len(remainingElementDictionaries)
+            elem[2]) / len(remainingElementDictionaries)
         negAnswerProb = 1 - posAnswerProb
         posAnswerNumberOfEliminatedResponses = len(
-            remainingElementDictionaries) - possibleQuestions[i][2]
-        negAnswerNumberOfEliminatedResponses = possibleQuestions[i][2]
+            remainingElementDictionaries) - elem[2]
+        negAnswerNumberOfEliminatedResponses = elem[2]
         averageEliminatedResponses = (posAnswerProb * posAnswerNumberOfEliminatedResponses) + (
             negAnswerProb * negAnswerNumberOfEliminatedResponses)
-        possibleQuestions[i][2] = averageEliminatedResponses
+        elem[2] = averageEliminatedResponses
     i2 = 0
     while(i2 < len(possibleQuestions)):
         if(possibleQuestions[i2][2] == 0):
@@ -213,12 +213,11 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     for i in range(0, bestValueIndex):
         if(possibleQuestions[i][2] == possibleQuestions[bestValueIndex][2]):
             allWithBestValue += [possibleQuestions[i]]
-    for i in range(0, len(allWithBestValue)):
-        if(allWithBestValue[i][0] == "name" and (len(allWithBestValue[i][1])>1)):
-            result = allWithBestValue[i]
-            return result[0], result[1]
+    for elem in allWithBestValue:
+        if(elem[0] == "name" and (len(elem[1])>1)):
+            return elem[0], elem[1]
     priorities=["exceptionToConfigRules", "electronConfig", "period", "atomicNumber", "family", "name"]
-    
+
 
     result = allWithBestValue[randint(0, len(allWithBestValue) - 1)]
     return result[0], result[1]
