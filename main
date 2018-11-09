@@ -1,7 +1,7 @@
 
 from random import randint
 # Define constants
-#if 0, converges as quickly as possible
+# if 0, converges as quickly as possible
 AVGNUMBEROFQUESTIONS = 0
 # describes block of periodic table
 periodicShapePeriod = ([1] * 2) + ([2] * 8) + \
@@ -55,11 +55,11 @@ def atomicNumberToElectronConfig(i):
         if(j < len(elementNames)):
             currentPeriod = periodicShapePeriod[j]
             currentFamily = periodicShapeFamily[j]
-    if(currentFamily-1 == 6):
+    if(currentFamily - 1 == 6):
         electronConfig = electronConfig[:-6]
         electronConfig += str(currentPeriod) + "s1 " + \
             str(currentPeriod - 1) + "d5 "
-    elif(currentFamily-1 == 11):
+    elif(currentFamily - 1 == 11):
         electronConfig = electronConfig[:-6]
         electronConfig += str(currentPeriod) + "s1 " + \
             str(currentPeriod - 1) + "d10 "
@@ -72,31 +72,32 @@ def eliminate(remainingElementDictionaries, field, questionParam, condition):
     newDic = remainingElementDictionaries.copy()
     for i in range(0, len(remainingElementDictionaries)):
 
-        if((str(questionParam) in str(remainingElementDictionaries[i][field]))!=condition):
+        if((str(questionParam) in str(remainingElementDictionaries[i][field])) != condition):
             for j in range(0, len(newDic)):
                 if(newDic[j]["name"] == remainingElementDictionaries[i]["name"]):
                     newDic.pop(j)
                     break
     return newDic
 
-#hell yeah, copy pasted quicksort code
+# hell yeah, copy pasted quicksort code
 
-def partition(arr,low,high):
-    i = ( low-1 )         # index of smaller element
+
+def partition(arr, low, high):
+    i = (low - 1)         # index of smaller element
     pivot = arr[high][2]     # pivot
 
-    for j in range(low , high):
+    for j in range(low, high):
 
         # If current element is smaller than or
         # equal to pivot
-        if   arr[j][2] <= pivot:
+        if arr[j][2] <= pivot:
 
             # increment index of smaller element
-            i = i+1
-            arr[i],arr[j] = arr[j],arr[i]
+            i = i + 1
+            arr[i], arr[j] = arr[j], arr[i]
 
-    arr[i+1],arr[high] = arr[high],arr[i+1]
-    return ( i+1 )
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return (i + 1)
 
 # The main function that implements QuickSort
 # arr[] --> Array to be sorted,
@@ -104,30 +105,34 @@ def partition(arr,low,high):
 # high  --> Ending index
 
 # Function to do Quick sort
-def quickSort(arr,low,high):
+
+
+def quickSort(arr, low, high):
     if low < high:
 
         # pi is partitioning index, arr[p] is now
         # at right place
-        pi = partition(arr,low,high)
+        pi = partition(arr, low, high)
 
         # Separately sort elements before
         # partition and after partition
-        quickSort(arr, low, pi-1)
-        quickSort(arr, pi+1, high)
+        quickSort(arr, low, pi - 1)
+        quickSort(arr, pi + 1, high)
 
 
 def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     electronConfigPossibilites = []
     for i in range(1, 6):
         for j in range(1, 3):
-            electronConfigPossibilites += [[str(i) + "s" + str(j)+ " ", 0]]
+            electronConfigPossibilites += [[str(i) + "s" + str(j) + " ", 0]]
         if(2 <= i):
             for j in range(1, 7):
-                electronConfigPossibilites += [[str(i) + "p" + str(j)+ " ", 0]]
+                electronConfigPossibilites += [
+                    [str(i) + "p" + str(j) + " ", 0]]
         if(3 <= i <= 4):
             for j in range(1, 11):
-                electronConfigPossibilites += [[str(i) + "d" + str(j)+ " ", 0]]
+                electronConfigPossibilites += [
+                    [str(i) + "d" + str(j) + " ", 0]]
     possibleQuestions = []
     numOfExceptions = 0
     family = [0 for i in range(18)]
@@ -144,11 +149,10 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
             if((electronConfigPossibilites[j][0]) in remainingElementDictionaries[i]["electronConfig"]):
                 electronConfigPossibilites[j][1] += 1
         for j in range(0, 10):
-            if(str(j+1) in remainingElementDictionaries[i]["atomicNumber"]):
-                atomic[j]+=1
+            if(str(j + 1) in remainingElementDictionaries[i]["atomicNumber"]):
+                atomic[j] += 1
 
-
-    #no zero check because info gain below takes care of it and it's more readable this way
+    # no zero check because info gain below takes care of it and it's more readable this way
     possibleQuestions += [["exceptionToConfigRules", True, numOfExceptions]]
     for i in range(0, 18):
         possibleQuestions += [["family", i + 1, family[i]]]
@@ -157,68 +161,71 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
         possibleQuestions += [["period", i + 1, period[i]]]
 
     for i in range(0, len(electronConfigPossibilites)):
-        possibleQuestions += [["electronConfig", electronConfigPossibilites[i][0], electronConfigPossibilites[i][1]]]
+        possibleQuestions += [["electronConfig",
+                               electronConfigPossibilites[i][0], electronConfigPossibilites[i][1]]]
 
     for i in range(0, 10):
-        possibleQuestions += [["atomicNumber", i+1, atomic[i]]]
-    #turn number of positives into average element elimination
+        possibleQuestions += [["atomicNumber", i + 1, atomic[i]]]
+    # turn number of positives into average element elimination
     for i in range(0, len(possibleQuestions)):
-        posAnswerProb=float(possibleQuestions[i][2])/len(remainingElementDictionaries)
-        negAnswerProb=1-posAnswerProb
-        posAnswerNumberOfEliminatedResponses=len(remainingElementDictionaries)-possibleQuestions[i][2]
-        negAnswerNumberOfEliminatedResponses=possibleQuestions[i][2]
-        averageEliminatedResponses=(posAnswerProb*posAnswerNumberOfEliminatedResponses)+(negAnswerProb*negAnswerNumberOfEliminatedResponses)
-        possibleQuestions[i][2]=averageEliminatedResponses
-    i2=0
-    while(i2<len(possibleQuestions)):
-        if(possibleQuestions[i2][2]==0):
+        posAnswerProb = float(
+            possibleQuestions[i][2]) / len(remainingElementDictionaries)
+        negAnswerProb = 1 - posAnswerProb
+        posAnswerNumberOfEliminatedResponses = len(
+            remainingElementDictionaries) - possibleQuestions[i][2]
+        negAnswerNumberOfEliminatedResponses = possibleQuestions[i][2]
+        averageEliminatedResponses = (posAnswerProb * posAnswerNumberOfEliminatedResponses) + (
+            negAnswerProb * negAnswerNumberOfEliminatedResponses)
+        possibleQuestions[i][2] = averageEliminatedResponses
+    i2 = 0
+    while(i2 < len(possibleQuestions)):
+        if(possibleQuestions[i2][2] == 0):
             possibleQuestions.pop(i2)
         else:
-            i2+=1
+            i2 += 1
 
-    quickSort(possibleQuestions, 0, len(possibleQuestions)-1)
+    quickSort(possibleQuestions, 0, len(possibleQuestions) - 1)
     print(possibleQuestions)
-    if(questionsLeft>1):
-        idealQuestionNumber=len(remainingElementDictionaries)*pow(1/len(remainingElementDictionaries), 1/questionsLeft)
-        bestValueIndex=0
+    if(questionsLeft > 1):
+        idealQuestionNumber = len(remainingElementDictionaries) * \
+            pow(1 / len(remainingElementDictionaries), 1 / questionsLeft)
+        bestValueIndex = 0
         for i in range(0, len(possibleQuestions)):
-            if(possibleQuestions[i][2]>idealQuestionNumber):
-                if(abs(possibleQuestions[i][2]-idealQuestionNumber)<abs(possibleQuestions[i-1][2]-idealQuestionNumber)):
-                    bestValueIndex=i
+            if(possibleQuestions[i][2] > idealQuestionNumber):
+                if(abs(possibleQuestions[i][2] - idealQuestionNumber) < abs(possibleQuestions[i - 1][2] - idealQuestionNumber)):
+                    bestValueIndex = i
                 else:
-                    bestValueIndex=i-1
+                    bestValueIndex = i - 1
                 break
     else:
-        bestValueIndex=len(possibleQuestions)-1
+        bestValueIndex = len(possibleQuestions) - 1
 
-    allWithBestValue=[possibleQuestions[bestValueIndex]]
+    allWithBestValue = [possibleQuestions[bestValueIndex]]
     for i in range(0, bestValueIndex):
-        if(possibleQuestions[i][2]==possibleQuestions[bestValueIndex][2]):
-            allWithBestValue+=[possibleQuestions[i]]
+        if(possibleQuestions[i][2] == possibleQuestions[bestValueIndex][2]):
+            allWithBestValue += [possibleQuestions[i]]
     for i in range(0, len(allWithBestValue)):
-        if(allWithBestValue[i][0]=="name"):
-            result=allWithBestValue[i]
+        if(allWithBestValue[i][0] == "name"):
+            result = allWithBestValue[i]
             return result[0], result[1]
-    result=allWithBestValue[randint(0, len(allWithBestValue)-1)]
+    result = allWithBestValue[randint(0, len(allWithBestValue) - 1)]
     return result[0], result[1]
 
 
-
-
-
 def getQuestion(category, param):
-    if(category=="name"):
-        return "Is your element "+str(param)+"?"
-    if(category=="exceptionToConfigRules"):
+    if(category == "name"):
+        return "Is your element " + str(param) + "?"
+    if(category == "exceptionToConfigRules"):
         return "Is your element an exception to the normal electron configuration rules?"
-    if(category=="electronConfig"):
-        return "Does your element contain "+str(param)+" in it's electron configuration"
-    if(category=="family"):
-        return "Is your element in family "+str(param)
-    if(category=="period"):
-        return "Is your element in period "+str(param)
-    if(category=="atomicNumber"):
-        return "Does your element's atomic number contain a "+str(param)
+    if(category == "electronConfig"):
+        return "Does your element contain " + str(param) + " in it's electron configuration"
+    if(category == "family"):
+        return "Is your element in family " + str(param)
+    if(category == "period"):
+        return "Is your element in period " + str(param)
+    if(category == "atomicNumber"):
+        return "Does your element's atomic number contain a " + str(param)
+
 
 def main():
     numOfQuestionsAsked = 0
@@ -226,15 +233,15 @@ def main():
     for i in range(0, len(elementNames)):
         tempDic = {
             "name": elementNames[i],
-            "electronConfig": atomicNumberToElectronConfig(i+1),
+            "electronConfig": atomicNumberToElectronConfig(i + 1),
             "exceptionToConfigRules": (periodicShapeFamily[i] == 6 or periodicShapeFamily[i] == 11),
             "transitionMetal": (periodicShapeFamily[i] in list(range(3, 13))),
-            "atomicNumber": str(i+1),
+            "atomicNumber": str(i + 1),
             "family": periodicShapeFamily[i],
             "period": periodicShapePeriod[i]
         }
-        if(i==1):
-            tempDic["family"]=18
+        if(i == 1):
+            tempDic["family"] = 18
         remainingElementDictionaries.append(tempDic)
 
     # from the numbers I determine electron configuration, hardcoding exceptions for half and fully filled D
@@ -255,14 +262,17 @@ def main():
     while(len(remainingElementDictionaries) > 1):
         print()
         print("Possible Elements:")
-        for i in range(0, len(remainingElementDictionaries)-1):
+        for i in range(0, len(remainingElementDictionaries) - 1):
             print(remainingElementDictionaries[i]["name"], end=', ')
-        print(remainingElementDictionaries[len(remainingElementDictionaries)-1]["name"])
+        print(remainingElementDictionaries[len(
+            remainingElementDictionaries) - 1]["name"])
         print()
         questionCategory, questionParam = getIdealQuestion(
             AVGNUMBEROFQUESTIONS - numOfQuestionsAsked, remainingElementDictionaries)
-        print(getQuestion(questionCategory, questionParam)+ " y/n")
+        print(getQuestion(questionCategory, questionParam) + " y/n")
         remainingElementDictionaries = eliminate(
             remainingElementDictionaries, questionCategory, questionParam, input() == "y")
-    print("Your element is: "+remainingElementDictionaries[0]["name"])
+    print("Your element is: " + remainingElementDictionaries[0]["name"])
+
+
 main()
