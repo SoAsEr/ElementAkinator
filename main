@@ -217,6 +217,9 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
         if(allWithBestValue[i][0] == "name" and (len(allWithBestValue[i][1])>1)):
             result = allWithBestValue[i]
             return result[0], result[1]
+    priorities=["exceptionToConfigRules", "electronConfig", "period", "atomicNumber", "family", "name"]
+    
+
     result = allWithBestValue[randint(0, len(allWithBestValue) - 1)]
     return result[0], result[1]
 
