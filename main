@@ -1,7 +1,8 @@
 
 from random import randint
 # Define constants
-AVGNUMBEROFQUESTIONS = 5
+#if 0, converges as quickly as possible
+AVGNUMBEROFQUESTIONS = 0
 # describes block of periodic table
 periodicShapePeriod = ([1] * 2) + ([2] * 8) + \
     ([3] * 8) + ([4] * 18) + ([5] * 18)
@@ -54,11 +55,11 @@ def atomicNumberToElectronConfig(i):
         if(j < len(elementNames)):
             currentPeriod = periodicShapePeriod[j]
             currentFamily = periodicShapeFamily[j]
-    if(currentFamily - 1 == 6):
+    if(currentFamily-1 == 6):
         electronConfig = electronConfig[:-6]
         electronConfig += str(currentPeriod) + "s1 " + \
             str(currentPeriod - 1) + "d5 "
-    elif(currentFamily - 1 == 11):
+    elif(currentFamily-1 == 11):
         electronConfig = electronConfig[:-6]
         electronConfig += str(currentPeriod) + "s1 " + \
             str(currentPeriod - 1) + "d10 "
@@ -70,12 +71,12 @@ def atomicNumberToElectronConfig(i):
 def eliminate(remainingElementDictionaries, field, questionParam, condition):
     newDic = remainingElementDictionaries.copy()
     for i in range(0, len(remainingElementDictionaries)):
-        if(remainingElementDictionaries[i][field] != (questionParam and condition)):
+
+        if((str(questionParam) in str(remainingElementDictionaries[i][field]))!=condition):
             for j in range(0, len(newDic)):
                 if(newDic[j]["name"] == remainingElementDictionaries[i]["name"]):
                     newDic.pop(j)
                     break
-    print(len(newDic))
     return newDic
 
 #hell yeah, copy pasted quicksort code
@@ -120,13 +121,13 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     electronConfigPossibilites = []
     for i in range(1, 6):
         for j in range(1, 3):
-            electronConfigPossibilites += [[str(i) + "s" + str(j), 0]]
+            electronConfigPossibilites += [[str(i) + "s" + str(j)+ " ", 0]]
         if(2 <= i):
             for j in range(1, 7):
-                electronConfigPossibilites += [[str(i) + "p" + str(j), 0]]
+                electronConfigPossibilites += [[str(i) + "p" + str(j)+ " ", 0]]
         if(3 <= i <= 4):
             for j in range(1, 11):
-                electronConfigPossibilites += [[str(i) + "d" + str(j), 0]]
+                electronConfigPossibilites += [[str(i) + "d" + str(j)+ " ", 0]]
     possibleQuestions = []
     numOfExceptions = 0
     family = [0 for i in range(18)]
@@ -139,12 +140,12 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
         family[remainingElementDictionaries[i]["family"] - 1] += 1
         period[remainingElementDictionaries[i]["period"] - 1] += 1
         for j in range(0, len(electronConfigPossibilites)):
-            if((electronConfigPossibilites[j][0] + " ") in remainingElementDictionaries[i]["electronConfig"]):
+            if((electronConfigPossibilites[j][0]) in remainingElementDictionaries[i]["electronConfig"]):
                 electronConfigPossibilites[j][1] += 1
 
 
     #no zero check because info gain below takes care of it and it's more readable this way
-    possibleQuestions += [["exceptionToConfigRules", None, numOfExceptions]]
+    possibleQuestions += [["exceptionToConfigRules", True, numOfExceptions]]
     for i in range(0, 18):
         possibleQuestions += [["family", i + 1, family[i]]]
 
@@ -170,25 +171,39 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
             i2+=1
 
     quickSort(possibleQuestions, 0, len(possibleQuestions)-1)
-    idealQuestionNumber=len(remainingElementDictionaries)*pow(1/len(remainingElementDictionaries), 1/questionsLeft)
-    bestValueIndex=0
-    for i in range(0, len(possibleQuestions)):
-        if(possibleQuestions[i][2]>idealQuestionNumber):
-            if(abs(possibleQuestions[i][2]-idealQuestionNumber)<abs(possibleQuestions[i-1][2]-idealQuestionNumber)):
-                bestValueIndex=i
-            else:
-                bestValueIndex=i-1
-            break
-    allWithBestValue=[possibleQuestions[bestValueIndex]]
-    for i in range(0, bestValueIndex):
-        if(possibleQuestions[i][2]==possibleQuestions[bestValueIndex][2]):
-            allWithBestValue+=[possibleQuestions[i]]
-    result=allWithBestValue[randint(0, len(allWithBestValue)-1)]
-    return result[0], result[1]
+    if(questionsLeft>1):
+        idealQuestionNumber=len(remainingElementDictionaries)*pow(1/len(remainingElementDictionaries), 1/questionsLeft)
+        bestValueIndex=0
+        for i in range(0, len(possibleQuestions)):
+            if(possibleQuestions[i][2]>idealQuestionNumber):
+                if(abs(possibleQuestions[i][2]-idealQuestionNumber)<abs(possibleQuestions[i-1][2]-idealQuestionNumber)):
+                    bestValueIndex=i
+                else:
+                    bestValueIndex=i-1
+                break
+        allWithBestValue=[possibleQuestions[bestValueIndex]]
+        for i in range(0, bestValueIndex):
+            if(possibleQuestions[i][2]==possibleQuestions[bestValueIndex][2]):
+                allWithBestValue+=[possibleQuestions[i]]
+        result=allWithBestValue[randint(0, len(allWithBestValue)-1)]
+        return result[0], result[1]
+    else:
+        return possibleQuestions[len(possibleQuestions)-1][0], possibleQuestions[len(possibleQuestions)-1][1]
 
 
 
 
+def getQuestion(category, param):
+    if(category=="name"):
+        return "Is your element "+str(param)+"?"
+    if(category=="exceptionToConfigRules"):
+        return "Is your element an exception to the normal electron configuration rules?"
+    if(category=="electronConfig"):
+        return "Does your element contain "+str(param)+" in it's electron configuration"
+    if(category=="family"):
+        return "Is your element in family "+str(param)
+    if(category=="period"):
+        return "Is your element in period "+str(param)
 
 def main():
     numOfQuestionsAsked = 0
@@ -196,10 +211,10 @@ def main():
     for i in range(0, len(elementNames)):
         tempDic = {
             "name": elementNames[i],
-            "electronConfig": atomicNumberToElectronConfig(i),
+            "electronConfig": atomicNumberToElectronConfig(i+1),
             "exceptionToConfigRules": (periodicShapeFamily[i] == 6 or periodicShapeFamily[i] == 11),
             "transitionMetal": (periodicShapeFamily[i] in list(range(3, 13))),
-            "atomicNumber": str(i),
+            "atomicNumber": i,
             "family": periodicShapeFamily[i],
             "period": periodicShapePeriod[i]
         }
@@ -211,9 +226,8 @@ def main():
     #"Is your element a metal?"
     #"Is your element a transition metal?"
 
-    questions = []
     #"Does your element have _____ in it's electron configuration"
-    questions += "does "
+
     #electronConfStrings=["Does your element have ", "in it's electron configuration"]
     #"Is your element an exception to the electron configuration rules?"
     #"Does your element form a charge of ___"
@@ -221,14 +235,13 @@ def main():
     print("Is your element a transition metal?")
     numOfQuestionsAsked += 1
     remainingElementDictionaries = eliminate(
-        remainingElementDictionaries, "transitionMetal", True, input() == "t")
+        remainingElementDictionaries, "transitionMetal", True, input() == "y")
 
     while(len(remainingElementDictionaries) != 1):
         questionCategory, questionParam = getIdealQuestion(
             AVGNUMBEROFQUESTIONS - numOfQuestionsAsked, remainingElementDictionaries)
         print(getQuestion(questionCategory, questionParam))
         remainingElementDictionaries = eliminate(
-            remainingElementDictionaries, questionCategory, questionParam, input() == "t")
-
-
+            remainingElementDictionaries, questionCategory, questionParam, input() == "y")
+    print("Your element is: "+remainingElementDictionaries[0]["name"])
 main()
