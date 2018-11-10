@@ -6,9 +6,9 @@ from string import ascii_lowercase
 AVGNUMBEROFQUESTIONS = 0
 # describes block of periodic table
 periodicShapePeriod = ([1] * 2) + ([2] * 8) + \
-    ([3] * 8) + ([4] * 18) + ([5] * 18)
+    ([3] * 8) + ([4] * 18) + ([5] * 18) + ([6] * 18) + ([7] * 18)
 periodicShapeFamily = [
-    1, 18] + (([1, 2] + list(range(13, 19))) * 2) + (list(range(1, 19)) * 2)
+    1, 18] + (([1, 2] + list(range(13, 19))) * 2) + (list(range(1, 19)) * 4)
 # first I need to define the names (numbers (row, period))
 elementNames = ["Hydrogen", "Helium", "Lithium", "Beryllium"]
 elementNames += ["Boron", "Carbon", "Nitrogen", "Oxygen", "Fluorine", "Neon", "Sodium", "Magnesium", "Aluminum", "Silicon",
@@ -16,13 +16,9 @@ elementNames += ["Boron", "Carbon", "Nitrogen", "Oxygen", "Fluorine", "Neon", "S
 elementNames += ["Manganese", "Iron", "Cobalt", "Nickel", "Copper", "Zinc", "Gallium", "Germanium", "Arsenic", "Selenium", "Bromine", "Krypton",
                  "Rubidium", "Strontium", "Yttrium", "Zirconium", "Niobium", "Molybdenum", "Technetium", "Ruthenium", "Rhodium", "Palladium", "Silver"]
 elementNames += ["Cadmium", "Indium", "Tin",
-                 "Antimony", "Tellurium", "Iodine", "Xenon"]
-'''
-,"Cesium","Barium","Lanthanum","Cerium","Praseodymium","Neodymium","Promethium","Samarium","Europium","Gadolinium"]
-elementNames+=["Terbium","Dysprosium","Holmium","Erbium","Thulium","Ytterbium","Lutetium","Hafnium","Tantalum","Tungsten","Rhenium","Osmium","Iridium","Platinum","Gold","Mercury","Thallium","Lead","Bismuth","Polonium","Astatine","Radon","Francium","Radium"]
-elementNames+=["Actinium","Thorium","Protactinium","Uranium","Neptunium","Plutonium","Americium","Curium","Berkelium","Californium","Einsteinium","Fermium","Mendelevium","Nobelium","Lawrencium","Rutherfordium","Dubnium","Seaborgium","Bohrium","Hassium","Meitnerium","Darmstadtium","Roentgenium","Ununbium"]
+                 "Antimony", "Tellurium", "Iodine", "Xenon", "Cesium","Barium","Lanthanum","Hafnium","Tantalum","Tungsten","Rhenium","Osmium","Iridium","Platinum","Gold","Mercury","Thallium","Lead","Bismuth","Polonium","Astatine","Radon","Francium","Radium"]
+elementNames+=["Actinium","Rutherfordium","Dubnium","Seaborgium","Bohrium","Hassium","Meitnerium","Darmstadtium","Roentgenium","Ununbium"]
 elementNames+=["Ununtrium","Ununquadium","Ununpentium","Ununhexium","Ununseptium","Ununoctium"]
-'''
 
 
 def atomicNumberToElectronConfig(i):
@@ -38,29 +34,28 @@ def atomicNumberToElectronConfig(i):
     currentBlock = ""
     j = 2
     while(j < i):
-        if(currentFamily == 1):
+        if (j==57):
+            electronConfig+=str(currentPeriod-2)+"f14 "
+        if(periodicShapeFamily[j] == 1):
             electronConfig += str(runningBlockCounter + 1) + " "
             runningBlockCounter = 0
-            electronConfig += str(currentPeriod) + "s"
-        elif (currentFamily == 3):
+            electronConfig += str(periodicShapePeriod[j]) + "s"
+        elif (periodicShapeFamily[j] == 3):
             electronConfig += str(runningBlockCounter + 1) + " "
             runningBlockCounter = 0
-            electronConfig += str(currentPeriod - 1) + "d"
-        elif (currentFamily == 13):
+            electronConfig += str(periodicShapePeriod[j] - 1) + "d"
+        elif (periodicShapeFamily[j] == 13):
             electronConfig += str(runningBlockCounter + 1) + " "
             runningBlockCounter = 0
-            electronConfig += str(currentPeriod) + "p"
+            electronConfig += str(periodicShapePeriod[j]) + "p"
         else:
             runningBlockCounter += 1
         j += 1
-        if(j < len(elementNames)):
-            currentPeriod = periodicShapePeriod[j]
-            currentFamily = periodicShapeFamily[j]
-    if(currentFamily - 1 == 6):
+    if(periodicShapeFamily[j-1] == 6):
         electronConfig = electronConfig[:-6]
         electronConfig += str(currentPeriod) + "s1 " + \
             str(currentPeriod - 1) + "d5 "
-    elif(currentFamily - 1 == 11):
+    elif(periodicShapeFamily[j-1] == 11):
         electronConfig = electronConfig[:-6]
         electronConfig += str(currentPeriod) + "s1 " + \
             str(currentPeriod - 1) + "d10 "
@@ -137,7 +132,7 @@ def getIdealQuestion(questionsLeft, remainingElementDictionaries):
     possibleQuestions = []
     numOfExceptions = 0
     family = [0 for i in range(18)]
-    period = [0 for i in range(5)]
+    period = [0 for i in range(7)]
     atomic = [0 for i in range(10)]
     letters = [0 for i in range(26)]
     for elem in remainingElementDictionaries:
@@ -261,12 +256,17 @@ def main():
     numOfQuestionsAsked = 0
     remainingElementDictionaries = []
     for i in range(0, len(elementNames)):
+        atomicNum=i+1
+        if(i>57):
+            atomicNum+=14
+        if(i>89):
+            atomicNum+=14
         tempDic = {
             "name": elementNames[i],
             "electronConfig": atomicNumberToElectronConfig(i + 1),
             "exceptionToConfigRules": (periodicShapeFamily[i] == 6 or periodicShapeFamily[i] == 11),
             "transitionMetal": (periodicShapeFamily[i] in list(range(3, 13))),
-            "atomicNumber": str(i + 1),
+            "atomicNumber": str(atomicNum),
             "family": periodicShapeFamily[i],
             "period": periodicShapePeriod[i]
         }
